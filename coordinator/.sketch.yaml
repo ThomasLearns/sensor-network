@@ -11,4 +11,6 @@ profiles:
     fqbn: arduino:avr:uno
     platforms:
       - platform: arduino:avr (1.8.6)
+    libraries:
+      - dev: ../libraries/SensorNetworkRadio (1.0.0)
 default_profile: uno

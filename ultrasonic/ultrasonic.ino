@@ -1,19 +1,33 @@
+#include <SensorNetworkRadio.h>
 
-// time between sending packets
-unsigned long sendIntervalMs = 10;
-// time of last packet sent
-unsigned long lastSendMs = 0;
+// device address on network
+#define ADDRESS 1
 
-// send a packet to the coordinator
-void sendPacket() {
-  // mark now as the last time a packet was sent
-  lastSendMs = millis()
-}
+// MHz
+#define RADIO_FREQUENCY 915.0
+
+// transceiver pins
+#define CHIP_SELECT_PIN 4
+#define RADIO_INTERRUPT_PIN 3
+#define RADIO_RESET_PIN 2
+
+// radio interaction object
+SensorNetworkRadio radio(
+  CHIP_SELECT_PIN,
+  RADIO_INTERRUPT_PIN,
+  RADIO_RESET_PIN,
+  ADDRESS,
+  RADIO_FREQUENCY
+);
 
 // runs at startup
 void setup() {
-  // send the first packet
-  sendPacket()
+  // setup serial
+  Serial.begin(9600);
+  while (!Serial);
+
+  // setup radio
+  radio.setup();
 }
 
 // runs on repeat
@@ -21,8 +35,6 @@ void loop() {
   // used to access the time of this loop
   unsigned long currentTimeMs = millis();
 
-  // if enough time has passed, send a packet to the coordinator
-  if (currentTimeMs - lastSendMs >= sendIntervalMs) {
-    sendPacket();
-  }
+  // drive radio
+  radio.loop();
 }
