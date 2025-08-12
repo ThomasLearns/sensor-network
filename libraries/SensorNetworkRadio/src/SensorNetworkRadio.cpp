@@ -56,6 +56,7 @@ void SensorNetworkRadio::loop() {
   if (!radioManager.available()) return;
 
   // read in the packet
+  uint8_t packetBuffer[RH_RF69_MAX_MESSAGE_LEN];
   uint8_t packetLength = sizeof(packetBuffer);
   uint8_t sourceAddress;
   if (!radioManager.recvfrom(packetBuffer, &packetLength, &sourceAddress)) {
@@ -130,8 +131,8 @@ void SensorNetworkRadio::loop() {
 
 // broadcast a discovery packet
 void SensorNetworkRadio::sendDiscoveryPacket() {
-  packetBuffer[0] = 0x02;
-  if (!radioManager.sendto(packetBuffer, 1, RH_BROADCAST_ADDRESS)) {
+  uint8_t packetBuffer[1] = { 0x02 };
+  if (!radioManager.sendto(packetBuffer, sizeof(packetBuffer), RH_BROADCAST_ADDRESS)) {
     // failed to send
     Serial.write(0);
     Serial.println("Failed to send discovery packet");
@@ -148,7 +149,7 @@ void SensorNetworkRadio::sendDataPacket(uint8_t* buffer, uint8_t bufferLength, u
   }
 
   // prepend the data packet indicator byte
-  packetBuffer[0] = 0x05;
+  uint8_t packetBuffer[RH_RF69_MAX_MESSAGE_LEN] = { 0x05 };
   memcpy(packetBuffer + 1, buffer, bufferLength);
 
   // send the data packet

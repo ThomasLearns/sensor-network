@@ -18,7 +18,6 @@ SensorNetworkRadio radio(
   RADIO_INTERRUPT_PIN,
   RADIO_RESET_PIN,
   ADDRESS,
-  // encryptionKey,
   RADIO_FREQUENCY
 );
 

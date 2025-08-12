@@ -16,8 +16,6 @@ class SensorNetworkRadio {
     float frequency;  // MHz
     uint8_t resetPin;
 
-    uint8_t packetBuffer[RH_RF69_MAX_MESSAGE_LEN];
-
   public:
     // constructor
     SensorNetworkRadio(
