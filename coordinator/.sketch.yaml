@@ -12,5 +12,7 @@ profiles:
     platforms:
       - platform: arduino:avr (1.8.6)
     libraries:
+      - RadioHead (1.143.1)
+      - PacketSerial (1.4.0)
       - dev: ../libraries/SensorNetworkRadio (1.0.0)
 default_profile: uno
