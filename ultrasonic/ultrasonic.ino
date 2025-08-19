@@ -1,6 +1,9 @@
 #include <SensorNetworkRadio.h>
-#include <RH_RF69.h>
-#include <RHReliableDatagram.h>
+
+// select radio to use
+#include <Rf69Wrapper.h>
+// OR
+// #include <XbeeWrapper.h>
 
 // device address on network
 #define ADDRESS 1
@@ -8,49 +11,26 @@
 // MHz
 #define RADIO_FREQUENCY 915.0
 
-// transceiver pins
+// pin used to select the main transeiver
 #define CHIP_SELECT_PIN 4
-#define RADIO_INTERRUPT_PIN 3
-#define RADIO_RESET_PIN 2
 
-// transceiver settings
-RH_RF69 radioDriver(CHIP_SELECT_PIN, RADIO_INTERRUPT_PIN);
-RHReliableDatagram radioManager(radioDriver, ADDRESS);
-void setupRadio() {
-  // reset the transceiver
-  pinMode(RADIO_RESET_PIN, OUTPUT);
-  digitalWrite(RADIO_RESET_PIN, LOW);
-  delay(10);
-  digitalWrite(RADIO_RESET_PIN, HIGH);
-  delay(10);
-  digitalWrite(RADIO_RESET_PIN, LOW);
-  delay(10);
+// object used to communicate with coordinator
+RadioWrapper radio(ADDRESS, CHIP_SELECT_PIN, RADIO_FREQUENCY);
 
-  // initialize the radio manager
-  if (!radioManager.init()) {
-    Serial.println("Failed to init radio");
-    while (true); // block
-  } 
-  
-  // set the radio's frequency
-  if (!radioDriver.setFrequency(RADIO_FREQUENCY)) {
-    Serial.println("Failed to set radio frequency to " + String(RADIO_FREQUENCY) + "MHz");
-    while (true); // block
-  }
-
-  // configure the radio
-  radioDriver.setTxPower(20, true);
-  radioDriver.setEncryptionKey(encryptionKey);
-}
-
+// call every loop
+// listens to packets from coordinator
 void loopRadio() {
-  if (!radioManager.available()) return;
+  // handle internal actions needed every loop
+  radio.loop();
+
+  // stop if no available packets to read
+  if (!radio.available()) return;
 
   // read in the packet
-  uint8_t packetBuffer[RH_BROADCAST_ADDRESS];
+  uint8_t packetBuffer[MAX_PACKET_SIZE];
   uint8_t packetLength = sizeof(packetBuffer);
   uint8_t sourceAddress;
-  if (!radioManager.recvfrom(packetBuffer, &packetLength, &sourceAddress)) {
+  if (!radio.receive(packetBuffer, &packetLength, &sourceAddress)) {
     Serial.println("Failed to receive packet");
     return;
   }
@@ -82,7 +62,7 @@ void loopRadio() {
       memcpy(dataPacket + 4, data, sizeof(data)); // put data in packet
 
       // send data packet to sender of data request
-      radioManager.sendto(dataPacket, sizeof(dataPacket), sourceAddress);
+      radio.sendTo(dataPacket, sizeof(dataPacket), sourceAddress);
       break;
 
     default:
@@ -90,20 +70,23 @@ void loopRadio() {
   }
 }
 
+void handleRadioSetupError(String error) {
+  Serial.println(error);
+}
+
 // runs at startup
 void setup() {
   // setup serial
   Serial.begin(9600);
   while (!Serial);
-
-  setupRadio();
+  
+  if (!radio.setup(handleRadioSetupError)) {
+    Serial.println("Radio setup failed");
+    while (true) {} // block
+  }
 }
 
 // runs on repeat
 void loop() {
-  // used to access the time of this loop
-  unsigned long currentTimeMs = millis();
-
-  // drive the radio
   loopRadio();
 }
