@@ -71,14 +71,15 @@ void loopRadio() {
       }
 
       // temporary testing data to be removed when sensor is implemented
-      uint8_t data[2] = { 0x12, 0x34 };
+      uint8_t data[2] = { 0x00, 0xC8 };
 
       // build data packet
-      uint8_t dataPacket[3 + sizeof(data)];
+      uint8_t dataPacket[4 + sizeof(data)];
       dataPacket[0] = SENSOR_DATA_INDICATOR;  // mark as data packet
       dataPacket[1] = packetBuffer[1];  // mark with request id
       dataPacket[2] = DISTANCE_DATA_INDICATOR;  // mark as a distance data packet
-      memcpy(dataPacket + 3, data, sizeof(data)); // put data in packet
+      dataPacket[3] = ADDRESS;  // mark with address of sensor
+      memcpy(dataPacket + 4, data, sizeof(data)); // put data in packet
 
       // send data packet to sender of data request
       radioManager.sendto(dataPacket, sizeof(dataPacket), sourceAddress);
