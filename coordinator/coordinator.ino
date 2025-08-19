@@ -1,4 +1,4 @@
-#include <SensorNetworkRadio.h>
+#include <PacketTypes.h>
 #include <RH_RF69.h>
 #include <RHReliableDatagram.h>
 #include <PacketSerial.h>

@@ -1,4 +1,4 @@
-#include <SensorNetworkRadio.h>
+#include <PacketTypes.h>
 
 // select radio to use
 #include <Rf69Wrapper.h>
