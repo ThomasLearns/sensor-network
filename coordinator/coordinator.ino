@@ -1,7 +1,8 @@
 #include <PacketTypes.h>
-#include <RH_RF69.h>
-#include <RHReliableDatagram.h>
+// #include <RH_RF69.h>
+// #include <RHReliableDatagram.h>
 #include <PacketSerial.h>
+#include <Rf69Wrapper.h>
 
 // serial protocol for communicating with GUI
 SLIPPacketSerial guiSerial;
@@ -29,46 +30,11 @@ void sendDebug(String message) {
 #define ADDRESS 0
 // transeiver pins
 #define CHIP_SELECT_PIN 4
-#define RADIO_INTERRUPT_PIN 3
-#define RADIO_RESET_PIN 2
 // MHz
 #define RADIO_FREQUENCY 915.0
-// needs to be the same on all devices
-uint8_t encryptionKey[16] = {
-  0x29, 0x2f, 0x07, 0x6b, 0x91, 0xf2, 0xa4, 0x02,
-  0x60, 0xb5, 0x07, 0x88, 0x0f, 0x1e, 0x61, 0x72
-};
-// radio interaction objects
-RH_RF69 radioDriver(CHIP_SELECT_PIN, RADIO_INTERRUPT_PIN);
-RHReliableDatagram radioManager(radioDriver, ADDRESS);
 
-// set the RadioHead radio objects
-void setupRadio() {
-  // reset the transceiver
-  pinMode(RADIO_RESET_PIN, OUTPUT);
-  digitalWrite(RADIO_RESET_PIN, LOW);
-  delay(10);
-  digitalWrite(RADIO_RESET_PIN, HIGH);
-  delay(10);
-  digitalWrite(RADIO_RESET_PIN, LOW);
-  delay(10);
-
-  // initialize the radio manager
-  if (!radioManager.init()) {
-    sendDebug("Failed to init radio");
-    while (true); // block
-  } 
-  
-  // set the radio's frequency
-  if (!radioDriver.setFrequency(RADIO_FREQUENCY)) {
-    sendDebug("Failed to set radio frequency to " + String(RADIO_FREQUENCY) + "MHz");
-    while (true); // block
-  }
-
-  // configure the radio
-  radioDriver.setTxPower(20, true);
-  radioDriver.setEncryptionKey(encryptionKey);
-}
+// radio interaction object
+RadioWrapper radio(ADDRESS, CHIP_SELECT_PIN, RADIO_FREQUENCY);
 
 // after sending out a data request, we wait to ensure all data is
 // received
@@ -87,13 +53,15 @@ uint8_t currentDataId = 0x00;
 
 // drive the radio transceiver
 void loopRadio() {
-  if (!radioManager.available()) return;
+  radio.loop();
+
+  if (!radio.available()) return;
 
   // read in the packet
   uint8_t packetBuffer[RH_RF69_MAX_MESSAGE_LEN];
   uint8_t packetLength = sizeof(packetBuffer);
   uint8_t sourceAddress;
-  if (!radioManager.recvfrom(packetBuffer, &packetLength, &sourceAddress)) {
+  if (!radio.receive(packetBuffer, &packetLength, &sourceAddress)) {
     sendDebug("Failed to receive packet");
     return;
   }
@@ -159,7 +127,7 @@ void onSerialPacketReceived(const uint8_t* buffer, size_t size) {
       sensorDataRequest[1] = currentDataId;
 
       // send request
-      radioManager.sendto(sensorDataRequest, 2, RH_BROADCAST_ADDRESS);
+      radio.sendTo(sensorDataRequest, 2, RH_BROADCAST_ADDRESS);
 
       // start paying attention to data packets coming in
       waitingForData = true;
@@ -176,6 +144,10 @@ void onSerialPacketReceived(const uint8_t* buffer, size_t size) {
   }
 }
 
+void showRadioSetupError(String message) {
+  sendDebug(message);
+}
+
 // runs once at startup
 void setup() {
   // setup serial
@@ -183,7 +155,10 @@ void setup() {
   guiSerial.setPacketHandler(&onSerialPacketReceived);
   delay(10);
 
-  setupRadio();
+  if (!radio.setup(showRadioSetupError)) {
+    sendDebug("Radio setup failed");
+    while (true);
+  }
 }
 
 // runs on repeat
