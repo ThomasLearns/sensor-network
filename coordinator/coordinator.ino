@@ -34,7 +34,7 @@ void sendDebug(String message) {
 #define RADIO_FREQUENCY 915.0
 
 // radio interaction object
-// RadioWrapper radio(ADDRESS, CHIP_SELECT_PIN, RADIO_FREQUENCY); // RF69
+// Rf69Wrapper radio(ADDRESS, CHIP_SELECT_PIN, RADIO_FREQUENCY); // RF69
 XbeeWrapper radio(ADDRESS); // XBee
 
 // after sending out a data request, we wait to ensure all data is

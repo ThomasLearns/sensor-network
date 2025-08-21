@@ -13,10 +13,10 @@ namespace Rf69Constants {
   extern uint8_t encryptionKey[16];
 }
 
-class RadioWrapper {
+class Rf69Wrapper {
   public:
 
-    RadioWrapper(uint8_t, uint8_t, float);
+    Rf69Wrapper(uint8_t, uint8_t, float);
 
     bool available();
     bool broadcast(uint8_t*, uint8_t);

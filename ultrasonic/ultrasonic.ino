@@ -15,7 +15,7 @@
 #define CHIP_SELECT_PIN 4
 
 // object used to communicate with coordinator
-// RadioWrapper radio(ADDRESS, CHIP_SELECT_PIN, RADIO_FREQUENCY); // RF69
+// Rf69Wrapper radio(ADDRESS, CHIP_SELECT_PIN, RADIO_FREQUENCY); // RF69
 XbeeWrapper radio(ADDRESS);  // XBee
 
 // call every loop
@@ -68,7 +68,7 @@ void loopRadio() {
       }
 
       break;
-      
+
     default:
       Serial.println("Unrecognized packet type");
   }
