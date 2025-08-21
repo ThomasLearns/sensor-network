@@ -1,4 +1,5 @@
 #include <PacketTypes.h>
+#include <Ultrasonic.h>
 
 // select radio to use
 // #include <Rf69Wrapper.h>
@@ -17,6 +18,12 @@
 // object used to communicate with coordinator
 // Rf69Wrapper radio(ADDRESS, CHIP_SELECT_PIN, RADIO_FREQUENCY); // RF69
 XbeeWrapper radio(ADDRESS);  // XBee
+
+// the ultrasonic sensor
+#define TRIGGER_PIN 12
+#define ECHO_PIN 11
+#define SENSOR_TIMEOUT_US 24000UL
+Ultrasonic sensor(TRIGGER_PIN, ECHO_PIN, SENSOR_TIMEOUT_US);
 
 // call every loop
 // listens to packets from coordinator
@@ -53,7 +60,7 @@ void loopRadio() {
 
       { // create scope to allow creating variables
       // temporary testing data to be removed when sensor is implemented
-      uint8_t data[2] = { 0x00, 0xC8 };
+      uint16_t data = sensor.read();
 
       // build data packet
       uint8_t dataPacket[4 + sizeof(data)];
@@ -61,7 +68,7 @@ void loopRadio() {
       dataPacket[1] = packetBuffer[1];  // mark with request id
       dataPacket[2] = DISTANCE_DATA_INDICATOR;  // mark as a distance data packet
       dataPacket[3] = ADDRESS;  // mark with address of sensor
-      memcpy(dataPacket + 4, data, sizeof(data)); // put data in packet
+      memcpy(dataPacket + 4, &data, sizeof(data)); // put data in packet
 
       // send data packet to sender of data request
       radio.sendTo(dataPacket, sizeof(dataPacket), sourceAddress);

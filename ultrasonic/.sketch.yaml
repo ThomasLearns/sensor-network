@@ -12,6 +12,7 @@ profiles:
     platforms:
       - platform: arduino:avr (1.8.6)
     libraries:
+      - Ultrasonic (3.0.0)
       - dev: ../libraries/SensorNetworkRadio (1.0.0)
       - dev: ../libraries/Rf69Wrapper (1.0.0)
       - dev: ../libraries/XbeeWrapper (1.0.0)
