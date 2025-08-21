@@ -1,4 +1,3 @@
-// dummy file
 #ifndef RF69_WRAPPER
 #define RF69_WRAPPER
 
@@ -33,7 +32,5 @@ class RadioWrapper {
     RHReliableDatagram radioManager;
     float frequency;
 };
-
-// #include "Rf69Wrapper.cpp"
 
 #endif

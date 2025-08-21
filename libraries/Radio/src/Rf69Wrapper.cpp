@@ -1,4 +1,3 @@
-
 #include "Rf69Wrapper.h"
 
 // encryption key should be the same for all radios we use

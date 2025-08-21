@@ -1,9 +1,9 @@
 #include <PacketTypes.h>
 
 // select radio to use
-#include <Rf69Wrapper.h>
+// #include <Rf69Wrapper.h>
 // OR
-// #include <XbeeWrapper.h>
+#include <XbeeWrapper.h>
 
 // device address on network
 #define ADDRESS 1
@@ -15,7 +15,8 @@
 #define CHIP_SELECT_PIN 4
 
 // object used to communicate with coordinator
-RadioWrapper radio(ADDRESS, CHIP_SELECT_PIN, RADIO_FREQUENCY);
+// RadioWrapper radio(ADDRESS, CHIP_SELECT_PIN, RADIO_FREQUENCY); // RF69
+XbeeWrapper radio(ADDRESS);  // XBee
 
 // call every loop
 // listens to packets from coordinator
@@ -50,6 +51,7 @@ void loopRadio() {
         break;
       }
 
+      { // create scope to allow creating variables
       // temporary testing data to be removed when sensor is implemented
       uint8_t data[2] = { 0x00, 0xC8 };
 
@@ -63,8 +65,10 @@ void loopRadio() {
 
       // send data packet to sender of data request
       radio.sendTo(dataPacket, sizeof(dataPacket), sourceAddress);
-      break;
+      }
 
+      break;
+      
     default:
       Serial.println("Unrecognized packet type");
   }

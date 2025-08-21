@@ -1,8 +1,8 @@
 #include <PacketTypes.h>
-// #include <RH_RF69.h>
-// #include <RHReliableDatagram.h>
 #include <PacketSerial.h>
-#include <Rf69Wrapper.h>
+// choose between a radio to use
+// #include <Rf69Wrapper.h>
+#include <XbeeWrapper.h>
 
 // serial protocol for communicating with GUI
 SLIPPacketSerial guiSerial;
@@ -34,7 +34,8 @@ void sendDebug(String message) {
 #define RADIO_FREQUENCY 915.0
 
 // radio interaction object
-RadioWrapper radio(ADDRESS, CHIP_SELECT_PIN, RADIO_FREQUENCY);
+// RadioWrapper radio(ADDRESS, CHIP_SELECT_PIN, RADIO_FREQUENCY); // RF69
+XbeeWrapper radio(ADDRESS); // XBee
 
 // after sending out a data request, we wait to ensure all data is
 // received
@@ -58,7 +59,7 @@ void loopRadio() {
   if (!radio.available()) return;
 
   // read in the packet
-  uint8_t packetBuffer[RH_RF69_MAX_MESSAGE_LEN];
+  uint8_t packetBuffer[MAX_PACKET_SIZE];
   uint8_t packetLength = sizeof(packetBuffer);
   uint8_t sourceAddress;
   if (!radio.receive(packetBuffer, &packetLength, &sourceAddress)) {
@@ -89,7 +90,7 @@ void loopRadio() {
       lastPacketMs = millis();
 
       // build a packet to send to gui in the for <coord data indicator> <sensor data>
-      uint8_t coordinatorData[RH_RF69_MAX_MESSAGE_LEN];
+      uint8_t coordinatorData[MAX_PACKET_SIZE];
       // mark as coordinator data packet
       coordinatorData[0] = COORDINATOR_DATA_INDICATOR;
       // put sensor data in packet
@@ -127,7 +128,7 @@ void onSerialPacketReceived(const uint8_t* buffer, size_t size) {
       sensorDataRequest[1] = currentDataId;
 
       // send request
-      radio.sendTo(sensorDataRequest, 2, RH_BROADCAST_ADDRESS);
+      radio.broadcast(sensorDataRequest, sizeof(sensorDataRequest));
 
       // start paying attention to data packets coming in
       waitingForData = true;
