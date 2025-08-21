@@ -12,7 +12,7 @@ profiles:
     platforms:
       - platform: arduino:avr (1.8.6)
     libraries:
-      - RadioHead (1.143.1)
       - dev: ../libraries/SensorNetworkRadio (1.0.0)
-      - dev: ../libraries/Radio (1.0.0)
+      - dev: ../libraries/Rf69Wrapper (1.0.0)
+      - dev: ../libraries/XbeeWrapper (1.0.0)
 default_profile: uno
