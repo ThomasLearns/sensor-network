@@ -7,7 +7,7 @@
 #include <XbeeWrapper.h>
 
 // device address on network
-#define ADDRESS 1
+#define ADDRESS 14
 
 // MHz
 #define RADIO_FREQUENCY 915.0
@@ -61,6 +61,10 @@ void loopRadio() {
       { // create scope to allow creating variables
       // temporary testing data to be removed when sensor is implemented
       uint16_t data = sensor.read();
+
+      // our ultrasonics don't read higher than 4 meters. They do give results
+      // that are >400 when they timeout however (I believe this is the library's fault).
+      if (data > 400) break;
 
       // build data packet
       uint8_t dataPacket[4 + sizeof(data)];
