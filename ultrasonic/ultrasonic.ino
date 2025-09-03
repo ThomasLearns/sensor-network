@@ -7,7 +7,7 @@
 #include <XbeeWrapper.h>
 
 // device address on network
-#define ADDRESS 14
+#define ROUT_NUMBER 9
 
 // MHz
 #define RADIO_FREQUENCY 915.0
@@ -16,8 +16,8 @@
 #define CHIP_SELECT_PIN 4
 
 // object used to communicate with coordinator
-// Rf69Wrapper radio(ADDRESS, CHIP_SELECT_PIN, RADIO_FREQUENCY); // RF69
-XbeeWrapper radio(ADDRESS);  // XBee
+// Rf69Wrapper radio(ROUT_NUMBER, CHIP_SELECT_PIN, RADIO_FREQUENCY); // RF69
+XbeeWrapper radio;  // XBee
 
 // the ultrasonic sensor
 #define TRIGGER_PIN 12
@@ -25,83 +25,49 @@ XbeeWrapper radio(ADDRESS);  // XBee
 #define SENSOR_TIMEOUT_US 24000UL
 Ultrasonic sensor(TRIGGER_PIN, ECHO_PIN, SENSOR_TIMEOUT_US);
 
-// call every loop
-// listens to packets from coordinator
-void loopRadio() {
-  // handle internal actions needed every loop
-  radio.loop();
+// send messages to coordinator for it to forward to gui which treats it as debug info
+// because we can't necessarily use serial from a sensor.
+void sendDebug(String message) {
+  String messageWithRout = "[" + String(ROUT_NUMBER) + "]: " + message;
+  uint8_t* cString = messageWithRout.c_str();
 
-  // stop if no available packets to read
-  if (!radio.available()) return;
+  uint8_t buffer[MAX_PACKET_SIZE];
+  buffer[0] = DEBUG_PACKET_INDICATOR;
+  memcpy(buffer + 1, cString, min(MAX_PACKET_SIZE - 1, strlen(cString)));
 
-  // read in the packet
-  uint8_t packetBuffer[MAX_PACKET_SIZE];
-  uint8_t packetLength = sizeof(packetBuffer);
-  uint8_t sourceAddress;
-  if (!radio.receive(packetBuffer, &packetLength, &sourceAddress)) {
-    Serial.println("Failed to receive packet");
-    return;
-  }
-
-  // if nothing in packet, stop
-  if (packetLength < 1) {
-    Serial.println("Empty packet received");
-    return;
-  }
-
-  // determine the type of packet by the first byte
-  switch (packetBuffer[0]) {
-    case SENSOR_DATA_REQUEST_INDICATOR:
-      // data requests must have a 2nd byte for the request id
-      if (packetLength < 2) {
-        Serial.println("Received data request without an ID");
-        break;
-      }
-
-      { // create scope to allow creating variables
-      // temporary testing data to be removed when sensor is implemented
-      uint16_t data = sensor.read();
-
-      // our ultrasonics don't read higher than 4 meters. They do give results
-      // that are >400 when they timeout however (I believe this is the library's fault).
-      if (data > 400) break;
-
-      // build data packet
-      uint8_t dataPacket[4 + sizeof(data)];
-      dataPacket[0] = SENSOR_DATA_INDICATOR;  // mark as data packet
-      dataPacket[1] = packetBuffer[1];  // mark with request id
-      dataPacket[2] = DISTANCE_DATA_INDICATOR;  // mark as a distance data packet
-      dataPacket[3] = ADDRESS;  // mark with address of sensor
-      memcpy(dataPacket + 4, &data, sizeof(data)); // put data in packet
-
-      // send data packet to sender of data request
-      radio.sendTo(dataPacket, sizeof(dataPacket), sourceAddress);
-      }
-
-      break;
-
-    default:
-      Serial.println("Unrecognized packet type");
-  }
+  radio.sendToCoordinator(buffer, min(MAX_PACKET_SIZE, strlen(cString) + 1));
 }
 
 void handleRadioSetupError(String error) {
-  Serial.println(error);
+  sendDebug(error);
 }
 
 // runs at startup
 void setup() {
-  // setup serial
-  Serial.begin(9600);
-  while (!Serial);
-  
   if (!radio.setup(handleRadioSetupError)) {
-    Serial.println("Radio setup failed");
+    sendDebug("Radio setup failed");
     while (true) {} // block
   }
 }
 
 // runs on repeat
 void loop() {
-  loopRadio();
+  // get distance from sensor
+  uint16_t data = sensor.read();
+
+  // our ultrasonics don't read higher than 4 meters. They do give results
+  // that are >400 when they timeout however (I believe this is the library's fault).
+  if (data <= 400) {
+    // build data packet
+    uint8_t dataPacket[3 + sizeof(data)];
+    dataPacket[0] = SENSOR_DATA_INDICATOR;  // mark as data packet
+    dataPacket[1] = DISTANCE_DATA_INDICATOR;  // mark as a distance data packet
+    dataPacket[2] = ROUT_NUMBER;  // mark with address of sensor
+    memcpy(dataPacket + 3, &data, sizeof(data)); // put data in packet
+
+    // send data packet to sender of data request
+    radio.sendToCoordinator(dataPacket, sizeof(dataPacket));
+  }
+
+  radio.loop();
 }

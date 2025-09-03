@@ -6,28 +6,26 @@
 
 #define MAX_PACKET_SIZE MAX_FRAME_DATA_SIZE
 
-#define BROADCAST_ADDRESS 0xFF
-
 class XbeeWrapper {
   public:
     // constructor
-    XbeeWrapper(uint8_t address);
+    XbeeWrapper(bool useSoftwareSerial = false);
 
     bool available();
     bool broadcast(uint8_t*, uint8_t);
-    bool sendTo(uint8_t*, uint8_t, uint8_t);
-    bool receive(uint8_t*, uint8_t*, uint8_t*);
+    bool sendToCoordinator(uint8_t*, uint8_t);
+    bool receive(uint8_t*, uint8_t*);
 
     bool setup(void (*)(String));
     void loop();
 
   private:
     XBee xbee;
-    ZBRxResponse rx;
+    Rx16Response rx;
 
-    // uses pins 9 (tx) and 8 (rx)
+    // uses pins 9 (tx) and 8 (rx) if in use. otherwise pins 1 (tx) and 0 (rx) are used
     AltSoftSerial xbeeSerial;
-    uint8_t address;
+    bool useSoftwareSerial;
 };
 
 #endif

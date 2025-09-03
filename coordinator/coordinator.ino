@@ -35,22 +35,14 @@ void sendDebug(String message) {
 
 // radio interaction object
 // Rf69Wrapper radio(ADDRESS, CHIP_SELECT_PIN, RADIO_FREQUENCY); // RF69
-XbeeWrapper radio(ADDRESS); // XBee
+XbeeWrapper radio(true); // XBee
 
-// after sending out a data request, we wait to ensure all data is
-// received
-unsigned long dataIdChangeIntervalMs = 2;
-unsigned long lastPacketMs = 0;
-// how much interval decreases each time
-unsigned long dataIdIntervalDecreaseRate = 1; // ms
-// how much interval increases when a packet is missed
-unsigned long dataIdIntervalIncreaseRate = 5;
-// how much time to leave after the last packet to avoid missing it in the future
-unsigned long dataIdIntervalSpacer = 5;  // ms
-bool waitingForData = false;
+// how long in milliseconds to accept data packets from sensors
+// after this, wait for the gui to request more data before sending
+// to avoid filling the gui's buffer
+unsigned long packetAcceptanceIntervalMs = 100;
+// tracks when last the gui requested data
 unsigned long waitStartTime = 0;
-// rotating id to be able to tell if a data packet is old
-uint8_t currentDataId = 0x00;
 
 // drive the radio transceiver
 void loopRadio() {
@@ -61,8 +53,7 @@ void loopRadio() {
   // read in the packet
   uint8_t packetBuffer[MAX_PACKET_SIZE];
   uint8_t packetLength = sizeof(packetBuffer);
-  uint8_t sourceAddress;
-  if (!radio.receive(packetBuffer, &packetLength, &sourceAddress)) {
+  if (!radio.receive(packetBuffer, &packetLength)) {
     sendDebug("Failed to receive packet");
     return;
   }
@@ -79,30 +70,30 @@ void loopRadio() {
       // data from sensor received.
       // now process slightly and send to GUI
 
-      // don't bother with this packet if its out of date
-      if (packetBuffer[1] != currentDataId) {
-        dataIdChangeIntervalMs += dataIdIntervalIncreaseRate;
+      // if not curretnly accepting data (gui still handling buffer usually)
+      // then stop processing packet (drop it)
+      if (millis() - waitStartTime > packetAcceptanceIntervalMs) break;
+
+      if (packetLength < 3) {
+        sendDebug("Data packet without all fields received");
         break;
       }
-
-      // mark now as the last time a packet matching data id
-      // was received
-      lastPacketMs = millis();
 
       // build a packet to send to gui in the for <coord data indicator> <sensor data>
       uint8_t coordinatorData[MAX_PACKET_SIZE];
       // mark as coordinator data packet
       coordinatorData[0] = COORDINATOR_DATA_INDICATOR;
       // put sensor data in packet
-      memcpy(coordinatorData + 1, packetBuffer + 2, packetLength - 2);
+      memcpy(coordinatorData + 1, packetBuffer + 1, packetLength - 1);
       // send to GUI
-      guiSerial.send(coordinatorData, packetLength - 1);
+      guiSerial.send(coordinatorData, packetLength);
+
       break;
 
     case DEBUG_PACKET_INDICATOR:
       // debug data to pass along to gui
       // mark with address of source device
-      sendDebug("[" + String(sourceAddress) + "]: " + String((char*)(packetBuffer + 1)));
+      sendDebug(String((char*)(packetBuffer + 1)));
       break;
 
     default:
@@ -120,18 +111,8 @@ void onSerialPacketReceived(const uint8_t* buffer, size_t size) {
   // check first byte of packet to determine type
   switch(buffer[0]) {
     case COORDINATOR_DATA_REQUEST_INDICATOR:
-      // GUI is requesting data. broadcast a data request to sensors
-
-      // build request
-      uint8_t sensorDataRequest[2];
-      sensorDataRequest[0] = SENSOR_DATA_REQUEST_INDICATOR;
-      sensorDataRequest[1] = currentDataId;
-
-      // send request
-      radio.broadcast(sensorDataRequest, sizeof(sensorDataRequest));
-
-      // start paying attention to data packets coming in
-      waitingForData = true;
+      // GUI is requesting data. forward all sensor data to the GUI
+      // for a set interval
       waitStartTime = millis();
       break;
 
@@ -145,10 +126,6 @@ void onSerialPacketReceived(const uint8_t* buffer, size_t size) {
   }
 }
 
-void showRadioSetupError(String message) {
-  sendDebug(message);
-}
-
 // runs once at startup
 void setup() {
   // setup serial
@@ -156,7 +133,7 @@ void setup() {
   guiSerial.setPacketHandler(&onSerialPacketReceived);
   delay(10);
 
-  if (!radio.setup(showRadioSetupError)) {
+  if (!radio.setup(sendDebug)) {
     sendDebug("Radio setup failed");
     while (true);
   }
@@ -164,35 +141,12 @@ void setup() {
 
 // runs on repeat
 void loop() {
-  // if listening for sensor data, check if time to stop listening (and cycle data id)
-  if (waitingForData && millis() - waitStartTime >= dataIdChangeIntervalMs) {
-    currentDataId++;  // cycle data id so we can differentiate between old and new packets
-    waitingForData = false; // stop caring about sensor data packets
-
-    // decrease the data id change interval to prevent it from being too long
-    // (only if we have packets to go off of, as there would be no point in decreasing time)
-    if (lastPacketMs >= waitStartTime) {
-      unsigned long newDataIdInterval = lastPacketMs - waitStartTime + dataIdIntervalSpacer;
-
-      // decrease interval to tighten timing (if possible)
-      if (dataIdChangeIntervalMs > dataIdIntervalDecreaseRate) {
-        if (newDataIdInterval < dataIdChangeIntervalMs - dataIdIntervalDecreaseRate) {
-          // cap decrease to set rate
-          newDataIdInterval = dataIdChangeIntervalMs - dataIdIntervalDecreaseRate;
-        } else if (newDataIdInterval < 1) {
-          // don't go lower than 1
-          newDataIdInterval = 1;
-        }
-      }
-
-      dataIdChangeIntervalMs = newDataIdInterval;
-    }
-
-    // send a packet to the gui to let it know that we are done with this cycle of data
+  // if listening for sensor data, check if time to stop forwarding sensor data
+  if (millis() - waitStartTime > packetAcceptanceIntervalMs) {
+    // let the GUI know the data packets finished
     uint8_t dataDone[1] = { COORDINATOR_DATA_DONE_INDICATOR };
     guiSerial.send(dataDone, sizeof(dataDone));
   }
-
   // drive the radio
   loopRadio();
 
