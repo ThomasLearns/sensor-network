@@ -20,8 +20,8 @@ class Rf69Wrapper {
 
     bool available();
     bool broadcast(uint8_t*, uint8_t);
-    bool sendTo(uint8_t*, uint8_t, uint8_t);
-    bool receive(uint8_t*, uint8_t*, uint8_t*);
+    bool sendToCoordinator(uint8_t*, uint8_t);
+    bool receive(uint8_t*, uint8_t*);
 
     bool setup(void (*)(String));
     void loop();

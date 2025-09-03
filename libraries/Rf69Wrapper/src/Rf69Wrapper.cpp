@@ -21,17 +21,18 @@ bool Rf69Wrapper::available() {
 
 // send a message to all other devices on the network
 bool Rf69Wrapper::broadcast(uint8_t* packet, uint8_t packetLength) {
-  return sendTo(packet, packetLength, RH_BROADCAST_ADDRESS);
+  return radioManager.sendto(packet, packetLength, RH_BROADCAST_ADDRESS);
 }
 
 // send a message to a specific device
-bool Rf69Wrapper::sendTo(uint8_t* packet, uint8_t packetLength, uint8_t targetAddress) {
-  return radioManager.sendto(packet, packetLength, targetAddress);
+bool Rf69Wrapper::sendToCoordinator(uint8_t* packet, uint8_t packetLength) {
+  return radioManager.sendto(packet, packetLength, 0x00);
 }
 
 // receive the next packet on the buffer
-bool Rf69Wrapper::receive(uint8_t* buffer, uint8_t* bufferSize, uint8_t* sourceAddress) {
-  return radioManager.recvfrom(buffer, bufferSize, sourceAddress);
+bool Rf69Wrapper::receive(uint8_t* buffer, uint8_t* bufferSize) {
+  uint8_t sourceAddress;
+  return radioManager.recvfrom(buffer, bufferSize, &sourceAddress);
 }
 
 // setup the transceiver
