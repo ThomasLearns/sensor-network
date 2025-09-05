@@ -11,5 +11,6 @@
 
 // indicators for types of data packets
 #define DISTANCE_DATA_INDICATOR 0x00
+#define JAM_DATA_INDICATOR 0x01
 
 #endif
