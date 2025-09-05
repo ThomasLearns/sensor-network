@@ -46,10 +46,16 @@ Using XCTU, the following settings differ from the factory default:
 - BD: 7
 - D7: 0
 
-
 Also make sure it is using 802.15.4.
 
 You can find a config file to do this on the Game of Drones USB drive or in this repo once/if we get Git LFS working.
+
+## Jammer Program
+
+The jammer program is responsible for forming and sending jam packets
+
+### XBee Settings
+Use the same XBee Settings as the Ultrasonic Program.
 
 ## Packet Types
 
@@ -73,7 +79,14 @@ A packet containing data from a sensor
 #### Distance
 Contains a distance measured in centimeters
 
-`<Sensor Data Indicator Byte> <Data Type Indicator Byte> <Sensor ID Byte> <Distance (2 Bytes)>`
+`<Sensor Data Indicator Byte> <Distance Indicator Byte> <Sensor ID Byte> <Distance (2 Bytes)>`
+
+#### Jam
+Contains a packet with info on what to jam
+
+For `Target Device Type ID Byte` and `Target Device ID Byte`, a value of `0x00` is used to represent all possible devices.
+
+`<Sensor Data Indicator Byte> <Jam Indicator Byte> <Network ID Byte> <Target Device Type ID Byte> <Target Device ID Byte>`
 
 ### Coordinator Data (Coordinator -> GUI)
 Sensor data forwarded to the GUI
