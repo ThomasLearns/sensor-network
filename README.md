@@ -4,12 +4,14 @@ Microcontroller code for transporting sensor data to the sensor GUI.
 
 ## Compiling
 
+You will need `arduinio-cli` from [Arduino CLI Installation](https://docs.arduino.cc/arduino-cli/installation/#download).
+
 To compile, run:
 ```shell
-arduino-cli compile <path to program folder> --libraries <absolute path to libraries folder> -b arduino:avr:uno
+arduino-cli compile <path to program folder>
 ```
 
-When arduino-cli reaches v1.3+, rename files from `.sketch.yaml` to `sketch.yaml`. After doing so, the compilation command should simply be `arduino-cli compile <path>`
+To select what radio you are compiling for, you must comment/uncomment the appropriate libraries in the `sketch.yaml` file as well as comment/uncomment the `#include` directives and radio constructors in the `.ino` files.
 
 ## Uploading
 
