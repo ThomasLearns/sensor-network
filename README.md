@@ -30,6 +30,10 @@ Using XCTU, the following settings differ from the factory default:
 - BD: 6
 - D7: 0
 
+Also make sure it is using 802.15.4.
+
+You can find a config file to do this on the Game of Drones USB drive or in this repo once/if we get Git LFS working.
+
 ## Ultrasonic Program
 
 The ultrasonic program is responsible for sending sensor data from ultrasonic sensors to the coordinator board.
@@ -39,6 +43,11 @@ Using XCTU, the following settings differ from the factory default:
 - AP: 2
 - BD: 7
 - D7: 0
+
+
+Also make sure it is using 802.15.4.
+
+You can find a config file to do this on the Game of Drones USB drive or in this repo once/if we get Git LFS working.
 
 ## Packet Types
 
