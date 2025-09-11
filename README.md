@@ -34,7 +34,7 @@ Using XCTU, the following settings differ from the factory default:
 
 Also make sure it is using 802.15.4.
 
-You can find a config file to do this on the Game of Drones USB drive or in this repo once/if we get Git LFS working.
+You can find apply this with the `coordinator-config.xpro` file.
 
 ## Ultrasonic Program
 
@@ -48,7 +48,7 @@ Using XCTU, the following settings differ from the factory default:
 
 Also make sure it is using 802.15.4.
 
-You can find a config file to do this on the Game of Drones USB drive or in this repo once/if we get Git LFS working.
+You can apply this with the `sensor-config.xpro` file.
 
 ## Jammer Program
 
