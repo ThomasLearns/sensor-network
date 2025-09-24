@@ -20,8 +20,8 @@
 XbeeWrapper radio;  // XBee
 
 // the ultrasonic sensor
-#define TRIGGER_PIN 12
-#define ECHO_PIN 11
+#define TRIGGER_PIN 12 // 9 on Rf69
+#define ECHO_PIN 11  // 8 on Rf69
 #define SENSOR_TIMEOUT_US 24000UL
 Ultrasonic sensor(TRIGGER_PIN, ECHO_PIN, SENSOR_TIMEOUT_US);
 
