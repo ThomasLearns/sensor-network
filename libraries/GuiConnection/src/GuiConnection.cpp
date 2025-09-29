@@ -74,7 +74,7 @@ void gui::sendDebug(uint8_t* message, size_t messageLength) {
 }
 
 // determine if/how to send data to the gui
-void gui::handlePacket(uint8_t* data, size_t dataLength) {
+void gui::handlePacket(uint8_t* data, size_t dataLength, bool forceSend = false) {
   if (dataLength < 1) {
     sendDebug("Empty packet received");
     return;
@@ -88,7 +88,8 @@ void gui::handlePacket(uint8_t* data, size_t dataLength) {
 
       // if not curretnly accepting data (gui still handling buffer usually)
       // then stop processing packet (drop it)
-      if (millis() - waitStartTime > packetAcceptanceIntervalMs) break;
+      // send the data anyway if the forceSend flag is set
+      if (!forceSend && millis() - waitStartTime > packetAcceptanceIntervalMs) break;
 
       if (dataLength < 3) {
         sendDebug("Data packet without all fields received");

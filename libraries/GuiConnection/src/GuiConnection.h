@@ -31,7 +31,9 @@ namespace gui {
   void sendDebug(uint8_t*, size_t);
 
   // used to forward packets from the network to the gui
-  void handlePacket(uint8_t*, size_t);
+  // if forceSend is true, applicable packet types will be sent to the GUI
+  // even if the GUI isn't ready. Use forceSend minimally.
+  void handlePacket(uint8_t*, size_t, bool forceSend);
 
 }
 
