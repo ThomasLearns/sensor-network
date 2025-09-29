@@ -26,7 +26,7 @@ namespace xbee {
     // If an arduino is set to not use software serial here, you should ensure that
     // the switch on the top board is set to DLINE when uploading code, and UART when
     // in use. If not set to DLINE when uploading, the upload will likely fail.
-    void setup(void (*)(const uint8_t*, size_t), bool useSoftwareSerial = false);
+    void setup(void (*finalPacketHandler)(const uint8_t*, size_t) = nullptr, bool useSoftwareSerial = false);
     
     // run every loop
     void loop();

@@ -9,11 +9,12 @@ namespace xbee {
 
   // open packets and pass to handler
   void packetHandler(Rx16Response& response, uintptr_t) {
+    if (onPacketReceived == nullptr) return;
     onPacketReceived(response.getData(), response.getDataLength());
   }
 
   void setup(
-    void (*finalPacketHandler)(const uint8_t*, size_t),
+    void (*finalPacketHandler)(const uint8_t*, size_t) = nullptr,
     bool useSoftwareSerial = false
   ) {
     // use this as the handler function for received packets (after opening with packetHandler())
