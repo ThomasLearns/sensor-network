@@ -1,0 +1,16 @@
+profiles:
+  uno:
+    fqbn: arduino:avr:uno
+    platforms:
+      - platform: arduino:avr (1.8.6)
+    libraries:
+      # needed for XbeeRadio
+      - dir: ../libraries/XbeeRadio
+      - XBee-Arduino library (0.6.0)
+      - AltSoftSerial (1.4.0)
+      # needed for UltrasonicSensor
+      - dir: ../libraries/UltrasonicSensor
+      - dir: ../libraries/PacketTypes
+      - Ultrasonic (3.0.0)
+      
+default_profile: uno
