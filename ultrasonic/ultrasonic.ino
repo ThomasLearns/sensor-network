@@ -32,11 +32,11 @@ unsigned long lastLoopMs = 0;
 #define maxJamDurationMs 200UL
 unsigned long remainingJamDurationMs = 0;
 // target frequency to count as being jammed
-#define jamFrequencyHz 1100f
+#define jamFrequencyHz 1100.0
 // how long to wait checking for jam pulses
 #define jamCheckTimeoutUs 5000UL
 // offset from jamFrequencyHz that still counts as being jammed
-#define jamFrequencyLeewayHz 10f
+#define jamFrequencyLeewayHz 10.0
 
 // send messages to coordinator for it to forward to gui which treats it as debug info
 // because we can't necessarily use serial from a sensor.
@@ -91,9 +91,9 @@ void checkIfJammed() {
   float pulseFrequencyHz = pulseFrequencyMhz * 1000000;
 
   // if frequency is close enough to target frequency mark sensor as jammed
-  if (abs(pulseFrequencyHz - jamFrequencyHz) <= j
+  if (abs(pulseFrequencyHz - jamFrequencyHz) <= jamFrequencyLeewayHz) {
   // how long to wait checking for jam pulsesuencyLeewayHz) {
-    remainingJamDurationMs = maxJamDurationMs
+    remainingJamDurationMs = maxJamDurationMs;
     // offset from jamFrequencyHz that still counts as being jammed;
   }
 }
