@@ -54,5 +54,5 @@ radio.sendToCoordinator(packet, sizeof(packet));
 If you want to pass the function for sending packets to the coordinator as an argument, you should use the static form.
 
 ```c++
-setCallback(Rf69Radio.sendToCoordinator, &radio);
+setCallback(Rf69Radio::sendToCoordinator, &radio);
 ```
