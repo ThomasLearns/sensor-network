@@ -48,3 +48,11 @@ If you want to send a packet to the coordinator, you should call `sendToCoordina
 uint8_t packet[] = { 0x00, 0x01, 0x02 };
 radio.sendToCoordinator(packet, sizeof(packet));
 ```
+
+#### Sending as a callback
+
+If you want to pass the function for sending packets to the coordinator as an argument, you should use the static form.
+
+```c++
+setCallback(Rf69Radio.sendToCoordinator, &radio);
+```

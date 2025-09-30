@@ -4,16 +4,21 @@
 UltrasonicSensor::UltrasonicSensor(
   uint8_t triggerPin,
   uint8_t echoPin,
-  uint8_t routNumber,
-  void (*handleData)(const uint8_t*, size_t) = nullptr
+  uint8_t routNumber
 ):
-  // callback for passing collected sensor data
-  handleData(handleData),
   // handle for ultrasonic sensor
   sensor(triggerPin, echoPin, ultrasonicSensorTimeoutUs),
   // sensor's id
   routNumber(routNumber)
 {}
+
+void UltrasonicSensor::setDataHandler(
+  void (*newDataHandler)(const uint8_t*, size_t, void*) = nullptr,
+  void* context = nullptr
+) {
+  handleData = newDataHandler;
+  dataHandlerContext = context;
+}
 
 void UltrasonicSensor::loop() {
   // don't do anything if there is nothing to do with
@@ -34,6 +39,6 @@ void UltrasonicSensor::loop() {
     memcpy(dataPacket + 3, &distance, sizeof(distance)); // put data in packet
 
     // send data packet
-    handleData(dataPacket, sizeof(dataPacket));
+    handleData(dataPacket, sizeof(dataPacket), dataHandlerContext);
   }
 }

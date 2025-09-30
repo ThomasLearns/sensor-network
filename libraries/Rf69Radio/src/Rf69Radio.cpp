@@ -55,6 +55,13 @@ void Rf69Radio::loop() {
 }
 
 // send a packet to the coordinator
+static void Rf69Radio::sendToCoordinator(
+  const uint8_t* packet,
+  size_t packetSize,
+  void* rf69RadioContext
+) {
+  static_cast<Rf69Radio*>(rf69RadioContext)->sendToCoordinator(packet, packetSize);
+}
 void Rf69Radio::sendToCoordinator(const uint8_t* packet, size_t packetSize) {
   radioManager.sendto(packet, packetSize, rf69CoordinatorAddress);
 }

@@ -19,9 +19,13 @@ struct UltrasonicSensor {
     UltrasonicSensor(
       uint8_t,  // trigger pin
       uint8_t,  // echo pin
-      uint8_t,  // sensor id
-      // data callback
-      void (*handleData)(const uint8_t*, size_t) = nullptr
+      uint8_t   // sensor id
+    );
+
+    // set the data callback function
+    void setDataHandler(
+      void (*)(const uint8_t*, size_t, void*) = nullptr,
+      void* = nullptr // instance context
     );
 
     // call frequently
@@ -29,7 +33,8 @@ struct UltrasonicSensor {
 
   private:
     // data callback
-    void (*handleData)(const uint8_t*, size_t);
+    void (*handleData)(const uint8_t*, size_t, void*);
+    void* dataHandlerContext;
 
     // we use the Ultrasonic library
     Ultrasonic sensor;

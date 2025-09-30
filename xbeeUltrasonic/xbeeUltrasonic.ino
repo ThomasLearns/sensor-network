@@ -15,13 +15,12 @@
 UltrasonicSensor sensor(
   triggerPin,
   echoPin,
-  routNumber,
-  // direct sensor data to xbee radio
-  xbee::sendToCoordinator
+  routNumber
 );
 
 void setup() {
   xbee::setup();
+  sensor.setDataHandler(xbee::sendToCoordinator);
 }
 
 void loop() {

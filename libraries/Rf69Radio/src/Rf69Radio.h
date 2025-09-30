@@ -38,6 +38,7 @@ struct Rf69Radio {
     void loop();
 
     // send a packet to the coordinator
+    static void sendToCoordinator(const uint8_t*, size_t, void*);
     void sendToCoordinator(const uint8_t*, size_t);
 
     // register a function to handle incoming packets
