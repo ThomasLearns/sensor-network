@@ -5,11 +5,11 @@ profiles:
       - platform: arduino:avr (1.8.6)
     libraries:
       # needed for GuiConnection
-      - dir: ../libraries/GuiConnection
-      - dir: ../libraries/PacketTypes
+      - dir: ../../libraries/GuiConnection
+      - dir: ../../libraries/PacketTypes
       - PacketSerial (1.4.0)  
       # needed for XbeeRadio
-      - dir: ../libraries/XbeeRadio
+      - dir: ../../libraries/XbeeRadio
       - XBee-Arduino library (0.6.0)
       - AltSoftSerial (1.4.0)
       

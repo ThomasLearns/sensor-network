@@ -7,7 +7,7 @@ This library defines an object that blocks packets when a LASER hits a photodiod
 Add the following line to your `sketch.yaml` in the **libraries** section:
 
 ```yaml
-- dev: ../libraries/PhotodiodeJammer
+- dir: ../../libraries/PhotodiodeJammer
 ```
 
 ## Use

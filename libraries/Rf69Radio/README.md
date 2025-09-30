@@ -5,7 +5,7 @@ This library handles communication between devices using RF69 radio transceivers
 ## Importing Rf69Radio Into Your Sketch
 Make sure that in the **libraries** section of your `sketch.yaml`, you have the following entries:
 ```yaml
-- dir: ../libraries/Rf69Radio
+- dir: ../../libraries/Rf69Radio
 - RadioHead (1.143.1)
 ```
 

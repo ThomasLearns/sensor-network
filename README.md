@@ -13,7 +13,7 @@ You will need `arduinio-cli` from [Arduino CLI Installation](https://docs.arduin
 
 To compile, run:
 ```shell
-arduino-cli compile <path to program folder>
+arduino-cli compile sketches/<sketch name>
 ```
 
 To select what radio you are compiling for, you must comment/uncomment the appropriate libraries in the `sketch.yaml` file as well as comment/uncomment the `#include` directives and radio constructors in the `.ino` files.
@@ -22,7 +22,7 @@ To select what radio you are compiling for, you must comment/uncomment the appro
 
 To upload a compiled program to a board, use `arduino-cli board list` to see the ports of connected boards, then use:
 ```shell
-arduino-cli upload -p <port> <path to program folder>
+arduino-cli upload -p <port> sketches/<sketch name>
 ```
 
 For non-coordinator XBee devices, it is important to flip the switch on the XBee shield to `DLINE` when uploading sketches and to `UART` when in use.

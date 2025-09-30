@@ -5,8 +5,8 @@
 #include <PacketTypes.h>
 
 // add the following entries to the libraries list in your sketch.yaml
-// - dir: ../libraries/GuiConnection
-// - dir: ../libraries/PacketTypes
+// - dir: ../../libraries/GuiConnection
+// - dir: ../../libraries/PacketTypes
 // - PacketSerial (1.4.0)
 
 namespace gui {

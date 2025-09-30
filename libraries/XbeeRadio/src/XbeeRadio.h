@@ -5,7 +5,7 @@
 #include <AltSoftSerial.h>
 
 // place the following entries in the libraries section of your sketch.yaml
-// - dir: ../libraries/XbeeRadio
+// - dir: ../../libraries/XbeeRadio
 // - XBee-Arduino library (0.6.0)
 // - AltSoftSerial (1.4.0)
 
