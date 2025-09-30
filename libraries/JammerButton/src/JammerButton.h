@@ -4,6 +4,10 @@
 #include <Arduino.h>
 #include <PacketTypes.h>
 
+// include these entries in the libraries section of your sketch.yaml
+// - dir: ../libraries/JammerButton
+// - dir: ../libraries/PacketTypes
+
 struct JammerButton {
   public:
     // constructor
