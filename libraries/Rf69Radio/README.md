@@ -11,6 +11,12 @@ Make sure that in the **libraries** section of your `sketch.yaml`, you have the 
 
 ## Use
 
+The RF69Radio takes in (optionally) an address (should be different for each device), the chip select pin it uses (should be different for each radio on this Arduino), and the frequency it uses.
+
+```c++
+Rf69Radio radio(0, 4, 915.0); // these are the defaults
+```
+
 After creating your `Rf69Radio` object, you should call its `setup` and `loop` member functions in the respecitve functions in your main `.ino` file.
 
 ```c++
