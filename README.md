@@ -2,6 +2,11 @@
 
 Microcontroller code for transporting sensor data to the sensor GUI.
 
+## Sensor ID / ROUT Number
+Each sensor in the sensor network **must** have a different sensor ID (also referred to as ROUT number).
+
+You should check the sensor ID / ROUT number in each sketch when you upload.
+
 ## Compiling
 
 You will need `arduinio-cli` from [Arduino CLI Installation](https://docs.arduino.cc/arduino-cli/installation/#download).
