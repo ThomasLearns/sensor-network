@@ -106,7 +106,6 @@ void gui::handlePacket(uint8_t* data, size_t dataLength, bool forceSend = false)
       // put sensor data in packet
       memcpy(guiData + 1, data + 1, dataLength - 1);
       // send to GUI
-      sendDebug("sending data");
       guiSerial.send(guiData, dataLength);
 
       break;
