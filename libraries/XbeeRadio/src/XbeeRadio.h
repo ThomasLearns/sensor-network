@@ -1,13 +1,9 @@
 #ifndef XBEE_RADIO
 #define XBEE_RADIO
 
+#include <Arduino.h>
 #include <XBee.h>
 #include <AltSoftSerial.h>
-
-// place the following entries in the libraries section of your sketch.yaml
-// - dir: ../../libraries/XbeeRadio
-// - XBee-Arduino library (0.6.0)
-// - AltSoftSerial (1.4.0)
 
 namespace xbee {
     // a different baud rate is used for the xbee module depending on the type

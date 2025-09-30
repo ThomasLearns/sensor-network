@@ -11,14 +11,13 @@
 
 JammerButton jammer(
   jamButtonPin,
-  routNumber,
-  // pass jam packets to coordinator
-  xbee::sendToCoordinator
+  routNumber
 );
 
 void setup() {
   xbee::setup();
   jammer.setup();
+  jammer.setJamHandler(xbee::sendToCoordinator);
 }
 
 void loop() {

@@ -4,11 +4,6 @@
 #include <PacketSerial.h>
 #include <PacketTypes.h>
 
-// add the following entries to the libraries list in your sketch.yaml
-// - dir: ../../libraries/GuiConnection
-// - dir: ../../libraries/PacketTypes
-// - PacketSerial (1.4.0)
-
 namespace gui {
   // how long in milliseconds to accept data packets from sensors
   // after this, wait for the gui to request more data before sending
@@ -33,7 +28,7 @@ namespace gui {
   // used to forward packets from the network to the gui
   // if forceSend is true, applicable packet types will be sent to the GUI
   // even if the GUI isn't ready. Use forceSend minimally.
-  void handlePacket(uint8_t*, size_t, bool forceSend);
+  void handlePacket(const uint8_t*, size_t, bool forceSend);
 
 }
 

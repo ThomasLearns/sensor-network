@@ -5,11 +5,6 @@
 #include <Ultrasonic.h>
 #include <PacketTypes.h>
 
-// add these entries to your sketch.yaml in the libraries section
-// - dir: ../../libraries/XbeeRadio
-// - XBee-Arduino library (0.6.0)
-// - AltSoftSerial (1.4.0)
-
 // time before sensor stops listening for echo
 #define ultrasonicSensorTimeoutUs 24000UL
 

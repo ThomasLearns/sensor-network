@@ -4,19 +4,15 @@
 #include <Arduino.h>
 #include <PacketTypes.h>
 
-// include these entries in the libraries section of your sketch.yaml
-// - dir: ../../libraries/JammerButton
-// - dir: ../../libraries/PacketTypes
-
 struct JammerButton {
   public:
     // constructor
     JammerButton(
       uint8_t,  // pin connected to jam button
-      uint8_t,  // sensor id
-      // callback for sending jam packets
-      void (*)(const uint8_t*, size_t) = nullptr
+      uint8_t   // sensor id
     );
+
+    void setJamHandler(void (*)(const uint8_t*, size_t, void*), void* = nullptr);
 
     // call from setup function
     void setup();
@@ -26,7 +22,9 @@ struct JammerButton {
   private:
     uint8_t buttonPin;
     uint8_t routNumber;
-    void (*packetHandler)(const uint8_t*, size_t);
+
+    void (*packetHandler)(const uint8_t*, size_t, void*) = nullptr;
+    void* packetHandlerContext = nullptr;
 };
 
 #endif

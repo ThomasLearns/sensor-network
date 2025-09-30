@@ -3,13 +3,16 @@
 // constructor
 JammerButton::JammerButton(
   uint8_t buttonPin,
-  uint8_t routNumber,
-  void (*packetHandler)(const uint8_t*, size_t)
+  uint8_t routNumber
 ):
   buttonPin(buttonPin),
-  routNumber(routNumber),
-  packetHandler(packetHandler)
+  routNumber(routNumber)
 {}
+
+void JammerButton::setJamHandler(void (*newJamHandler)(const uint8_t*, size_t, void*), void* context = nullptr) {
+  packetHandler = newJamHandler;
+  packetHandlerContext = context;
+}
 
 // setup the jammer button
 void JammerButton::setup() {
@@ -28,5 +31,5 @@ void JammerButton::loop() {
   jamPacket[3] = 0x00;  // jam all sensor types
   jamPacket[4] = 0x00;  // jam all sensor ids
   
-  packetHandler(jamPacket, sizeof(jamPacket));
+  packetHandler(jamPacket, sizeof(jamPacket), packetHandlerContext);
 }

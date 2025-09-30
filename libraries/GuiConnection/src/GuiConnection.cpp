@@ -74,7 +74,7 @@ void gui::sendDebug(uint8_t* message, size_t messageLength) {
 }
 
 // determine if/how to send data to the gui
-void gui::handlePacket(uint8_t* data, size_t dataLength, bool forceSend = false) {
+void gui::handlePacket(const uint8_t* data, size_t dataLength, bool forceSend = false) {
   if (dataLength < 1) {
     sendDebug("Empty packet received");
     return;
