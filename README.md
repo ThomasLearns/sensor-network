@@ -53,7 +53,9 @@ Using XCTU, the following settings differ from the factory default:
 
 Also make sure it is using 802.15.4.
 
-You can apply this with the `sensor-config.xpro` file.
+You can apply this with the `sensor-config.xpro` file after clicking on the Profile button and then choose Apply configuration profile option and then click the Write button and then click OK if it says "Nothing to write" to save the changes.
+
+This is especially helpful if you run into the problem of the ultrasonic program sending the "Unsupported packet type" debug log instead of the actual sensor data .
 
 ## Jammer Program
 
