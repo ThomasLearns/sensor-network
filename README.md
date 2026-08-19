@@ -46,16 +46,39 @@ You can find apply this with the `coordinator-config.xpro` file.
 The ultrasonic program is responsible for sending sensor data from ultrasonic sensors to the coordinator board.
 
 ### XBee Settings
-Using XCTU, the following settings differ from the factory default:
+Using the XCTU application, connect the RF module to the dev laptop, and click the Discover devices (magnifying glasses icon on the top left) 
+
+![](./images/Screenshot%202026-08-17%20100835.png)
+
+Click next 
+
+![](./images/Screenshot%202026-08-18%20113022.png)
+
+Then click Finish
+
+![](./images/Screenshot%202026-08-18%20113106.png) 
+
+Then Add selected devices
+
+![](./images/Screenshot%202026-08-18%20160207.png)
+
+![](./images/Screenshot%202026-08-18%20160527.png)
+And make sure that the following settings differ from the factory default after clicking on the added RF module on the left:
 - AP: 2
 - BD: 7
 - D7: 0
 
 Also make sure it is using 802.15.4.
 
-You can apply this with the `sensor-config.xpro` file after clicking on the Profile button and then choose Apply configuration profile option and then click the Write button and then click OK if it says "Nothing to write" to save the changes.
+![](./images/Screenshot%202026-08-18%20160725.png)
 
-This is especially helpful if you run into the problem of the ultrasonic program sending the "Unsupported packet type" debug log instead of the actual sensor data .
+You can apply this with the appropriate file depending on the device type after clicking on the Profile button and then choose Apply configuration profile option 
+
+![](./images/Screenshot%202026-08-18%20160915.png)
+
+and then click the Write button and then click OK if it says "Nothing to write" to save the changes.
+
+This is especially helpful if you run into the problem of the ultrasonic program sending the "Unsupported packet type" debug log instead of the actual sensor data.
 
 ## Jammer Program
 
