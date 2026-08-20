@@ -20,10 +20,16 @@ To select what radio you are compiling for, you must comment/uncomment the appro
 
 ## Uploading
 
-To upload a compiled program to a board, use `arduino-cli board list` to see the ports of connected boards, then use:
+To upload a compiled program to a board, use `arduino-cli board list` 
+
+![](./images/Screenshot%202026-08-20%20135244.png)
+
+to see the ports of connected boards, then use:
 ```shell
 arduino-cli upload -p <port> sketches/<sketch name>
 ```
+
+![](./images/Screenshot%202026-08-20%20135549.png) (for example)
 
 For non-coordinator XBee devices, it is important to flip the switch on the XBee shield to `DLINE` when uploading sketches and to `UART` when in use.
 
